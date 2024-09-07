@@ -1,0 +1,143 @@
+openapi: 3.0.0
+info:
+  title: API-ALATEVI
+  description: "Documentation de l'API pour ALATEVI"
+  version: '0.1'
+servers:
+  -
+    url: 'http://127.0.0.1:8000'
+    description: "Serveur de l'API locale"
+paths:
+  /api/events:
+    get:
+      tags:
+        - Events
+      summary: 'Display a listing of the resource.'
+      description: 'Récupérer la liste des événements en cours '
+      operationId: f03fc722854a9c744a79b16f6b27016c
+      responses:
+        '200':
+          description: 'Evènement trouvé.'
+        '404':
+          description: 'Pas d/évènement trouvé dans cette ville'
+  '/api/events/search/{event_city}':
+    get:
+      tags:
+        - Events
+      description: 'Rechercher un évènement dans une ville spécifique'
+      operationId: 6166a48d05a5652fb80488d25074a551
+      parameters:
+        -
+          name: event_city
+          in: query
+          description: "Liste d'évènement dans cette ville"
+          required: false
+      responses:
+        '200':
+          description: 'Evènement trouvé.'
+        '404':
+          description: 'Pas d/évènement trouvé dans cette ville'
+  '/api/orders/{used_id}':
+    get:
+      tags:
+        - Orders
+      summary: 'Display a listing of the resource.'
+      description: 'Afficher toutes les commandes effectuées par le client  '
+      operationId: cdfaf9c9da19729fefd7eb15967df37c
+      parameters:
+        -
+          name: userId
+          in: path
+          description: 'ID du client'
+          required: true
+      responses:
+        '200':
+          description: 'Evènement trouvé.'
+        '404':
+          description: 'Aucune commande trouvée'
+  /api/orders:
+    post:
+      tags:
+        - Orders
+      summary: 'Store a newly created resource in storage.'
+      description: 'Valider une intention de commande '
+      operationId: d470cd500f8c07d41b81bc8be9c2fca1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                order_intent_id:
+                  type: exists
+                order_payment:
+                  type: string
+                order_info:
+                  type: string
+              type: object
+      responses:
+        '201':
+          description: 'Commande validé.'
+        '404':
+          description: 'Commande non validé.'
+  /api/orders-intents:
+    post:
+      tags:
+        - Orders-Intents
+      summary: 'Store a newly created resource in storage.'
+      description: 'Créer une intention de commande '
+      operationId: 64d3936f4da533a9a781156e4deb03bf
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                order_intent_price:
+                  type: integer
+                order_intent_type:
+                  type: string
+                user_email:
+                  type: email
+                user_phone:
+                  type: string
+                expiration_date:
+                  type: string
+                  format: date
+              type: object
+      responses:
+        '201':
+          description: 'Votre commande a été enregistrée!'
+        '500':
+          description: "Votre commande n'a pas été enregistrée. Veuillez réessayer."
+  '/api/events/{event_id}/ticket-types':
+    get:
+      tags:
+        - Ticket-Types
+      summary: 'Display a listing of the resource.'
+      description: 'Récupérer la liste des types de tickets disponibles pour un événement donné '
+      operationId: c871193ba374f827f699758c8f2ce00f
+      parameters:
+        -
+          name: eventId
+          in: path
+          description: 'ID de événement'
+          required: true
+      responses:
+        '200':
+          description: 'ticket trouvée.'
+        '404':
+          description: 'ticket non trouvé'
+tags:
+  -
+    name: Events
+    description: Events
+  -
+    name: Orders
+    description: Orders
+  -
+    name: Orders-Intents
+    description: Orders-Intents
+  -
+    name: Ticket-Types
+    description: Ticket-Types

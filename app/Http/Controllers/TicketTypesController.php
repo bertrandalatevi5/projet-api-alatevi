@@ -6,19 +6,43 @@ use App\Models\TicketTypes;
 use App\Http\Requests\StoreTicketTypesRequest;
 use App\Http\Requests\UpdateTicketTypesRequest;
 use Illuminate\Support\Facades\DB;
+use OpenApi\Attributes as OA;
 
 class TicketTypesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    #[OA\Get(
+        path: '/api/events/{event_id}/ticket-types',
+        description: 'Récupérer la liste des types de tickets disponibles pour un événement donné ',
+        tags: ["Ticket-Types"],
+        parameters: [
+            new OA\PathParameter(name: 'eventId', description: 'ID de événement', required: true),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'ticket trouvée.'),
+            new OA\Response(response: 404, description: 'ticket non trouvé')
+        ]
+    )]
     public function index($event_id) // lister les types de tickets disponibles pour un événement donné
     {
         $ticketTypes = DB::table('ticket_types')
             ->where('ticket_type_event_id', $event_id)
             ->get();
 
-            return response()->json($ticketTypes);
+            if ($ticketTypes->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ticket non trouvée',
+                ], 404);
+            }else{
+                return response()->json([
+                    'success' => true,
+                    'data' => $ticketTypes,
+                    'message' => 'ticket trouvé',
+                ], 200);
+            }
     }
 
     /**
